@@ -22,13 +22,16 @@ class DispatchBot extends ActivityHandler {
         this.dispatchRecognizer = dispatchRecognizer;
 
         this.onMessage(async (context, next) => {
-            console.log('Processing Message Activity.');
+            await context.sendActivity('Processing Message Activity.');
 
             // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
             const recognizerResult = await dispatchRecognizer.recognize(context);
+            await context.sendActivity(recognizerResult);
 
             // Top intent tell us which cognitive service to use.
             const intent = LuisRecognizer.topIntent(recognizerResult);
+            await context.sendActivity(intent);
+
 
             // Next, we call the dispatcher with the top intent.
             await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
