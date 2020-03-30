@@ -2,7 +2,7 @@
 // Licensed under the MIT License.
 
 const { ActivityHandler } = require('botbuilder');
-const { LuisRecognizer, QnAMaker } = require('botbuilder-ai');
+const { LuisRecognizer } = require('botbuilder-ai');
 
 class DispatchBot extends ActivityHandler {
     constructor() {
@@ -13,7 +13,7 @@ class DispatchBot extends ActivityHandler {
         const dispatchRecognizer = new LuisRecognizer({
             applicationId: process.env.LuisAppId,
             endpointKey: process.env.LuisAPIKey,
-            endpoint: `https://${ process.env.LuisAPIHostName }.api.cognitive.microsoft.com`
+            endpoint: 'https://${ process.env.LuisAPIHostName }.api.cognitive.microsoft.com'
         }, {
             includeAllIntents: true,
             includeInstanceData: true
