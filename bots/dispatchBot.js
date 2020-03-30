@@ -19,14 +19,7 @@ class DispatchBot extends ActivityHandler {
             includeInstanceData: true
         }, true);
 
-        const qnaMaker = new QnAMaker({
-            knowledgeBaseId: process.env.QnAKnowledgebaseId,
-            endpointKey: process.env.QnAEndpointKey,
-            host: process.env.QnAEndpointHostName
-        });
-
         this.dispatchRecognizer = dispatchRecognizer;
-        this.qnaMaker = qnaMaker;
 
         this.onMessage(async (context, next) => {
             console.log('Processing Message Activity.');
@@ -60,14 +53,11 @@ class DispatchBot extends ActivityHandler {
 
     async dispatchToTopIntentAsync(context, intent, recognizerResult) {
         switch (intent) {
-        case 'l_HomeAutomation':
-            await this.processHomeAutomation(context, recognizerResult.luisResult);
+        case 'SNXVendorSearch':
+            await this.processVendor(context, recognizerResult.luisResult);
             break;
-        case 'l_Weather':
-            await this.processWeather(context, recognizerResult.luisResult);
-            break;
-        case 'q_sample-qna':
-            await this.processSampleQnA(context);
+        case 'None':
+            await this.processNone(context, recognizerResult.luisResult);
             break;
         default:
             console.log(`Dispatch unrecognized intent: ${ intent }.`);
@@ -76,45 +66,33 @@ class DispatchBot extends ActivityHandler {
         }
     }
 
-    async processHomeAutomation(context, luisResult) {
-        console.log('processHomeAutomation');
+    async processVendor(context, luisResult) {
+        console.log('processVendor');
 
         // Retrieve LUIS result for Process Automation.
         const result = luisResult.connectedServiceResult;
         const intent = result.topScoringIntent.intent;
 
-        await context.sendActivity(`HomeAutomation top intent ${ intent }.`);
-        await context.sendActivity(`HomeAutomation intents detected:  ${ luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n') }.`);
+        await context.sendActivity(`processVendor top intent ${ intent }.`);
+        await context.sendActivity(`processVendor intents detected:  ${ luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n') }.`);
 
         if (luisResult.entities.length > 0) {
-            await context.sendActivity(`HomeAutomation entities were found in the message: ${ luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n') }.`);
+            await context.sendActivity(`processVendor entities were found in the message: ${ luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n') }.`);
         }
     }
 
-    async processWeather(context, luisResult) {
-        console.log('processWeather');
+    async processNone(context, luisResult) {
+        console.log('processNone');
 
         // Retrieve LUIS results for Weather.
         const result = luisResult.connectedServiceResult;
         const topIntent = result.topScoringIntent.intent;
 
-        await context.sendActivity(`ProcessWeather top intent ${ topIntent }.`);
-        await context.sendActivity(`ProcessWeather intents detected:  ${ luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n') }.`);
+        await context.sendActivity(`processNone top intent ${ topIntent }.`);
+        await context.sendActivity(`processNone intents detected:  ${ luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n') }.`);
 
         if (luisResult.entities.length > 0) {
-            await context.sendActivity(`ProcessWeather entities were found in the message: ${ luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n') }.`);
-        }
-    }
-
-    async processSampleQnA(context) {
-        console.log('processSampleQnA');
-
-        const results = await this.qnaMaker.getAnswers(context);
-
-        if (results.length > 0) {
-            await context.sendActivity(`${ results[0].answer }`);
-        } else {
-            await context.sendActivity('Sorry, could not find an answer in the Q and A system.');
+            await context.sendActivity(`processNone entities were found in the message: ${ luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n') }.`);
         }
     }
 }
