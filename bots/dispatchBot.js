@@ -13,7 +13,7 @@ class DispatchBot extends ActivityHandler {
         const dispatchRecognizer = new LuisRecognizer({
             applicationId: process.env.LuisAppId,
             endpointKey: process.env.LuisAPIKey,
-            endpoint: 'https://${ process.env.LuisAPIHostName }.api.cognitive.microsoft.com'
+            endpoint: 'https://${ process.env.LuisAPIHostName }'
         }, {
             includeAllIntents: true,
             includeInstanceData: true
@@ -41,11 +41,11 @@ class DispatchBot extends ActivityHandler {
                 // Next, we call the dispatcher with the top intent.
                 await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
     
-                await next();
                 
             } catch (error) {
                 await context.sendActivity(error);
             }
+            await next();
         });
 
         this.onMembersAdded(async (context, next) => {
