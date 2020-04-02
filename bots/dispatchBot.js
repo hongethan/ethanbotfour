@@ -27,24 +27,19 @@ class DispatchBot extends ActivityHandler {
             await context.sendActivity(process.env.LuisAPIKey);
             await context.sendActivity(process.env.LuisAPIHostName);
 
-            try {
-                await context.sendActivity(dispatchRecognizer);
-                // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
-                const recognizerResult = await dispatchRecognizer.recognize(context);
-                await context.sendActivity(recognizerResult);
-    
-                // Top intent tell us which cognitive service to use.
-                const intent = LuisRecognizer.topIntent(recognizerResult);
-                await context.sendActivity(intent);
-    
-    
-                // Next, we call the dispatcher with the top intent.
-                await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
-    
-                
-            } catch (error) {
-                await context.sendActivity(error);
-            }
+            await context.sendActivity(dispatchRecognizer);
+            // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
+            const recognizerResult = await dispatchRecognizer.recognize(context);
+            await context.sendActivity(recognizerResult);
+
+            // Top intent tell us which cognitive service to use.
+            const intent = LuisRecognizer.topIntent(recognizerResult);
+            await context.sendActivity(intent);
+
+
+            // Next, we call the dispatcher with the top intent.
+            await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
+
             await next();
         });
 
@@ -54,7 +49,7 @@ class DispatchBot extends ActivityHandler {
 
             for (const member of membersAdded) {
                 if (member.id !== context.activity.recipient.id) {
-                    await context.sendActivity(`Welcome to Dispatch bot ${ member.name }. ${ welcomeText }`);
+                    await context.sendActivity(`Welcome to Dispatch bot ${member.name}. ${welcomeText}`);
                 }
             }
 
@@ -65,16 +60,16 @@ class DispatchBot extends ActivityHandler {
 
     async dispatchToTopIntentAsync(context, intent, recognizerResult) {
         switch (intent) {
-        case 'SNXVendorSearch':
-            await this.processVendor(context, recognizerResult.luisResult);
-            break;
-        case 'None':
-            await this.processNone(context, recognizerResult.luisResult);
-            break;
-        default:
-            console.log(`Dispatch unrecognized intent: ${ intent }.`);
-            await context.sendActivity(`Dispatch unrecognized intent: ${ intent }.`);
-            break;
+            case 'SNXVendorSearch':
+                await this.processVendor(context, recognizerResult.luisResult);
+                break;
+            case 'None':
+                await this.processNone(context, recognizerResult.luisResult);
+                break;
+            default:
+                console.log(`Dispatch unrecognized intent: ${intent}.`);
+                await context.sendActivity(`Dispatch unrecognized intent: ${intent}.`);
+                break;
         }
     }
 
@@ -85,11 +80,11 @@ class DispatchBot extends ActivityHandler {
         const result = luisResult.connectedServiceResult;
         const intent = result.topScoringIntent.intent;
 
-        await context.sendActivity(`processVendor top intent ${ intent }.`);
-        await context.sendActivity(`processVendor intents detected:  ${ luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n') }.`);
+        await context.sendActivity(`processVendor top intent ${intent}.`);
+        await context.sendActivity(`processVendor intents detected:  ${luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n')}.`);
 
         if (luisResult.entities.length > 0) {
-            await context.sendActivity(`processVendor entities were found in the message: ${ luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n') }.`);
+            await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
         }
     }
 
@@ -100,11 +95,11 @@ class DispatchBot extends ActivityHandler {
         const result = luisResult.connectedServiceResult;
         const topIntent = result.topScoringIntent.intent;
 
-        await context.sendActivity(`processNone top intent ${ topIntent }.`);
-        await context.sendActivity(`processNone intents detected:  ${ luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n') }.`);
+        await context.sendActivity(`processNone top intent ${topIntent}.`);
+        await context.sendActivity(`processNone intents detected:  ${luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n')}.`);
 
         if (luisResult.entities.length > 0) {
-            await context.sendActivity(`processNone entities were found in the message: ${ luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n') }.`);
+            await context.sendActivity(`processNone entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
         }
     }
 }
