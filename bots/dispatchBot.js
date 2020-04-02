@@ -25,7 +25,7 @@ class DispatchBot extends ActivityHandler {
             await context.sendActivity('Processing Message Activity.');
             await context.sendActivity(process.env.LuisAppId);
             await context.sendActivity(process.env.LuisAPIKey);
-            await context.sendActivity(process.env.process.env.LuisAPIHostName);
+            await context.sendActivity(process.env.LuisAPIHostName);
             await context.sendActivity(dispatchRecognizer);
 
             // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
