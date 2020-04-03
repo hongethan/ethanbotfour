@@ -13,7 +13,7 @@ class DispatchBot extends ActivityHandler {
         const dispatchRecognizer = new LuisRecognizer({
             applicationId: process.env.LuisAppId,
             endpointKey: process.env.LuisAPIKey,
-            endpoint: 'https://${ process.env.LuisAPIHostName }'
+            endpoint: process.env.LuisAPIHostName
         }, {
             includeAllIntents: true,
             includeInstanceData: true
