@@ -62,7 +62,7 @@ class DispatchBot extends ActivityHandler {
     async dispatchToTopIntentAsync(context, intent, recognizerResult) {
         switch (intent) {
             case 'VendorSearch':
-                await this.processVendor(context, recognizerResult.luisResult);
+                await this.processVendor(context, recognizerResult);
                 break;
             case 'None':
                 await this.processNone(context, recognizerResult.luisResult);
@@ -74,8 +74,10 @@ class DispatchBot extends ActivityHandler {
         }
     }
 
-    async processVendor(context, luisResult) {
+    async processVendor(context, recognizerResult) {
         console.log('processVendor');
+
+        const luisResult = recognizerResult.luisResult;
 
         // Retrieve LUIS result for Process Automation.
         const result = luisResult.connectedServiceResult;
