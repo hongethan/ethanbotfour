@@ -11,9 +11,9 @@ class DispatchBot extends ActivityHandler {
         // If the includeApiResults parameter is set to true, as shown below, the full response
         // from the LUIS api will be made available in the properties  of the RecognizerResult
         const dispatchRecognizer = new LuisRecognizer({
-            applicationId: process.env.LuisAppId,
-            endpointKey: process.env.LuisAPIKey,
-            endpoint: process.env.LuisAPIHostName
+            applicationId: '232471b4-d9d7-440f-ba4b-c486da24ecbb',
+            endpointKey: '024525c05fc441ec9d6d1f460e5af43c',
+            endpoint: 'https://lingethan.cognitiveservices.azure.com/'
         }, {
             includeAllIntents: true,
             includeInstanceData: true
@@ -23,21 +23,14 @@ class DispatchBot extends ActivityHandler {
 
         this.onMessage(async (context, next) => {
             await context.sendActivity('Processing Message Activity.');
-            await context.sendActivity(process.env.LuisAppId);
-            await context.sendActivity(process.env.LuisAPIKey);
-            await context.sendActivity(process.env.LuisAPIHostName);
 
             // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
-            try {
-                const recognizerResult = await dispatchRecognizer.recognize(context);
-                await context.sendActivity('call dispatcher');
-                const intent = LuisRecognizer.topIntent(recognizerResult);
-                await context.sendActivity('call topIntent');
-                await context.sendActivity(intent);
-                await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
-            } catch (error) {
-                await context.sendActivity(error);
-            }
+            const recognizerResult = await dispatchRecognizer.recognize(context);
+            await context.sendActivity('call dispatcher');
+            const intent = LuisRecognizer.topIntent(recognizerResult);
+            await context.sendActivity('call topIntent');
+            await context.sendActivity(intent);
+            await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
 
             // Top intent tell us which cognitive service to use.
             //const intent = LuisRecognizer.topIntent(recognizerResult);
