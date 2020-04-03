@@ -27,15 +27,19 @@ class DispatchBot extends ActivityHandler {
             await context.sendActivity(process.env.LuisAPIKey);
             await context.sendActivity(process.env.LuisAPIHostName);
 
-            await context.sendActivity(dispatchRecognizer);
             // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
-            const recognizerResult = await dispatchRecognizer.recognize(context);
+            try {
+                const recognizerResult = await dispatchRecognizer.recognize(context);
+                
+            } catch (error) {
+                await context.sendActivity(error);
+            }
 
             // Top intent tell us which cognitive service to use.
-            const intent = LuisRecognizer.topIntent(recognizerResult);
+            //const intent = LuisRecognizer.topIntent(recognizerResult);
 
             // Next, we call the dispatcher with the top intent.
-            await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
+            //await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
 
             await next();
         });
