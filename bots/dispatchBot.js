@@ -62,6 +62,7 @@ class DispatchBot extends ActivityHandler {
     async dispatchToTopIntentAsync(context, intent, recognizerResult) {
         switch (intent) {
             case 'VendorSearch':
+                await context.sendActivity('enter dispathere vendor search');
                 await this.processVendor(context, recognizerResult);
                 break;
             case 'None':
