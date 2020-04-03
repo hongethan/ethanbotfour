@@ -78,18 +78,18 @@ class DispatchBot extends ActivityHandler {
     async processVendor(context, recognizerResult) {
         console.log('processVendor');
 
-        const luisResult = recognizerResult.luisResult;
+        // const luisResult = recognizerResult.luisResult;
 
         // Retrieve LUIS result for Process Automation.
-        const result = luisResult.connectedServiceResult;
-        const intent = result.topScoringIntent.intent;
+        // const result = luisResult.connectedServiceResult;
+        // const intent = result.topScoringIntent.intent;
 
-        await context.sendActivity(`processVendor top intent ${intent}.`);
-        await context.sendActivity(`processVendor intents detected:  ${luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n')}.`);
+        // await context.sendActivity(`processVendor top intent ${intent}.`);
+        // await context.sendActivity(`processVendor intents detected:  ${luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n')}.`);
 
-        if (luisResult.entities.length > 0) {
-            await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
-        }
+        // if (luisResult.entities.length > 0) {
+        //     await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
+        // }
     }
 
     async processNone(context, luisResult) {
