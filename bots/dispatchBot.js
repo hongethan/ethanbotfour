@@ -30,7 +30,7 @@ class DispatchBot extends ActivityHandler {
             // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
             try {
                 const recognizerResult = await dispatchRecognizer.recognize(context);
-                
+                await context.sendActivity('call dispatcher');
             } catch (error) {
                 await context.sendActivity(error);
             }
