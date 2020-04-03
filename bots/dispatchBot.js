@@ -78,7 +78,11 @@ class DispatchBot extends ActivityHandler {
     async processVendor(context, recognizerResult) {
         console.log('processVendor');
 
-        // const luisResult = recognizerResult.luisResult;
+        try {
+            const luisResult = recognizerResult.luisResult;
+        } catch (error) {
+            await context.sendActivity(error);
+        }
 
         // Retrieve LUIS result for Process Automation.
         // const result = luisResult.connectedServiceResult;
