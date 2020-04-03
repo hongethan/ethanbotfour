@@ -33,6 +33,7 @@ class DispatchBot extends ActivityHandler {
                 await context.sendActivity('call dispatcher');
                 const intent = LuisRecognizer.topIntent(recognizerResult);
                 await context.sendActivity('call topIntent');
+                await context.sendActivity(intent);
                 await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
             } catch (error) {
                 await context.sendActivity(error);
