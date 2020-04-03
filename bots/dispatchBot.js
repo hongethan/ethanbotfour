@@ -80,6 +80,9 @@ class DispatchBot extends ActivityHandler {
 
         try {
             const luisResult = recognizerResult.luisResult;
+            if (luisResult.entities.length > 0) {
+                await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
+            }
         } catch (error) {
             await context.sendActivity(error);
         }
