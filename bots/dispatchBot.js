@@ -61,7 +61,7 @@ class DispatchBot extends ActivityHandler {
 
     async dispatchToTopIntentAsync(context, intent, recognizerResult) {
         switch (intent) {
-            case 'SNXVendorSearch':
+            case 'VendorSearch':
                 await this.processVendor(context, recognizerResult.luisResult);
                 break;
             case 'None':
