@@ -49,6 +49,9 @@ class DispatchBot extends ActivityHandler {
             const membersAdded = context.activity.membersAdded;
 
             for (const member of membersAdded) {
+                await context.sendActivity(member.id);
+                await context.sendActivity(member.name);
+                await context.sendActivity(context.activity.recipient.id);
                 if (member.id !== context.activity.recipient.id) {
                     await context.sendActivity(`Welcome to Dispatch bot ${member.name}. ${welcomeText}`);
                 }
