@@ -85,16 +85,19 @@ class DispatchBot extends ActivityHandler {
             const luisResult = recognizerResult.luisResult;
             if (luisResult.entities.length > 0) {
                 await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
-                const vendorKey = luisResult.entities.vendorKey;
+                const vendorKey = luisResult.entityObj.vendorKey;
 
-                await context.sendActivity('VendorKey:'+ vendorKey);
+                // const users=luisResult.entities.map(item => ({
+                //     url: item.entity
+                //     })
+                // );
+
+                await context.sendActivity(vendorKey);
 
                 const url = encodeURI('/gateway/p1-service?app_code=vendor-service&invoke_method=/api/vendor/vendorNamePattern/{patternName}/headers&paths={\"patternName\":\"' + 'abc' + '\"}\"');
                 console.log('--------------search Path:' + url);
-                //await context.sendActivity(`You said '${url}'`);
 
                 let finalresult = '';
-                //await context.sendActivity(`Result '${finalresult}'`);
 
                 let tmpresult = await requestRemoteByGetUser(url, 'ethanh');
                 let items = JSON.parse(tmpresult);
