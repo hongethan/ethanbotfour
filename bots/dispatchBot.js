@@ -85,7 +85,7 @@ class DispatchBot extends ActivityHandler {
             const luisResult = recognizerResult.luisResult;
             if (luisResult.entities.length > 0) {
                 await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
-                const vendorKey = luisResult.entities[0];
+                const vendorKey = luisResult.entities[0].entity;
 
                 await context.sendActivity(`${vendorKey}`);
 
