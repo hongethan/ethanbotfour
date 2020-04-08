@@ -3,6 +3,9 @@
 
 const { ActivityHandler } = require('botbuilder');
 const { LuisRecognizer } = require('botbuilder-ai');
+const https = require('https');
+
+const snxHost = 'ec.synnex.com';
 
 class DispatchBot extends ActivityHandler {
     constructor() {
@@ -82,21 +85,52 @@ class DispatchBot extends ActivityHandler {
             const luisResult = recognizerResult.luisResult;
             if (luisResult.entities.length > 0) {
                 await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
+                const vendorKey = luisResult.entities.vendorKey;
+
+                await context.sendActivity('VendorKey:'+ vendorKey);
+
+                const url = encodeURI('/gateway/p1-service?app_code=vendor-service&invoke_method=/api/vendor/vendorNamePattern/{patternName}/headers&paths={\"patternName\":\"' + 'abc' + '\"}\"');
+                console.log('--------------search Path:' + url);
+                //await context.sendActivity(`You said '${url}'`);
+
+                let finalresult = '';
+                //await context.sendActivity(`Result '${finalresult}'`);
+
+                let tmpresult = await requestRemoteByGetUser(url, 'ethanh');
+                let items = JSON.parse(tmpresult);
+                console.log('--------------Result :' + items.toString());
+
+                if (!items.hasOwnProperty('message')) {
+                    finalresult = 'I am sorry, I cannot find any related information. ';
+                } else if (!items.message.hasOwnProperty('data')) {
+                    finalresult = 'I am sorry, I cannot find any related information. ';
+                } else if (!items.message.data.hasOwnProperty('content')) {
+                    finalresult = 'I am sorry, I cannot find any related information. ';
+                } else {
+
+                    var array = [];
+                    if (!(items.message.data.content instanceof Array)) {
+                        array.push(items.message.data.content);
+                    } else {
+                        array = items.message.data.content;
+                    }
+
+                    var resultvendor = 'Vendor Information: ' + '  \n\t\r';
+                    for (var pos = 0; pos < array.length; pos++) {
+                        resultvendor = resultvendor + array[pos].vendNo + '---' + array[pos].vendName + '  \n\t\r';
+                    }
+
+                    if (array.length < 1) {
+                        resultvendor = resultvendor + 'Not Found';
+                    }
+                    finalresult = resultvendor;
+                }
+
+                await context.sendActivity(finalresult);
             }
         } catch (error) {
             await context.sendActivity(error);
         }
-
-        // Retrieve LUIS result for Process Automation.
-        // const result = luisResult.connectedServiceResult;
-        // const intent = result.topScoringIntent.intent;
-
-        // await context.sendActivity(`processVendor top intent ${intent}.`);
-        // await context.sendActivity(`processVendor intents detected:  ${luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n')}.`);
-
-        // if (luisResult.entities.length > 0) {
-        //     await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
-        // }
     }
 
     async processNone(context, luisResult) {
@@ -113,6 +147,34 @@ class DispatchBot extends ActivityHandler {
             await context.sendActivity(`processNone entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
         }
     }
+}
+
+async function requestRemoteByGetUser(url, user) {
+    return new Promise(function (resolve, reject) {
+        var crypto = require('crypto');
+        const options = {
+          hostname: snxHost,
+          port: 443,
+          path: url,
+          method: 'GET',
+          headers: {
+            'user': crypto.createHash('sha1').update(user).digest('base64')
+          }
+        };
+        const request = https.get(options, res => {      
+          res.setEncoding('utf8');
+          let body = '';
+          res.on('data', data => {
+            body += data;
+          });
+          res.on('end', () => {
+            console.log("Pure Result is : "+body); 
+            resolve(body); 
+          });
+        });
+        
+        request.on('error', (err) => reject(err));   
+    });
 }
 
 module.exports.DispatchBot = DispatchBot;
