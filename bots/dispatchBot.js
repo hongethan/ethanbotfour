@@ -92,6 +92,7 @@ class DispatchBot extends ActivityHandler {
                     })
                 );
 
+                vendorKey = users.vendorKey;
                 await context.sendActivity(`${vendorKey}`);
                 await context.sendActivity(`${users}`);
 
