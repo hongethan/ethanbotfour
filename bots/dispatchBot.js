@@ -87,12 +87,13 @@ class DispatchBot extends ActivityHandler {
                 await context.sendActivity(`processVendor entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
                 const vendorKey = luisResult.entityObj.vendorKey;
 
-                // const users=luisResult.entities.map(item => ({
-                //     url: item.entity
-                //     })
-                // );
+                const users=luisResult.entities.map(entityObj => ({
+                    vendorKey: entityObj.entity
+                    })
+                );
 
                 await context.sendActivity(vendorKey);
+                await context.sendActivity(users);
 
                 const url = encodeURI('/gateway/p1-service?app_code=vendor-service&invoke_method=/api/vendor/vendorNamePattern/{patternName}/headers&paths={\"patternName\":\"' + 'abc' + '\"}\"');
                 console.log('--------------search Path:' + url);
