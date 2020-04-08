@@ -93,7 +93,7 @@ class DispatchBot extends ActivityHandler {
                 );
 
                 await context.sendActivity(`${vendorKey}`);
-                await context.sendActivity(users);
+                await context.sendActivity(`${users}`);
 
                 const url = encodeURI('/gateway/p1-service?app_code=vendor-service&invoke_method=/api/vendor/vendorNamePattern/{patternName}/headers&paths={\"patternName\":\"' + 'abc' + '\"}\"');
                 console.log('--------------search Path:' + url);
