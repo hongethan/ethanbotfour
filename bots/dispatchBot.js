@@ -153,9 +153,9 @@ class DispatchBot extends ActivityHandler {
 
                 let issueKey = backlogKey;
 
-                let path = '/gateway/backlogQuery/' + issueKey;
+                let path = '/gateway/backlogQuery/' + issueKey.toString().trim();
 
-                let tmpresult = await requestRemoteByGetUser(path, 'ethanh');
+                let tmpresult = await requestRemoteByGet(path);
                 await context.sendActivity(tmpresult);
                 let array = JSON.parse(tmpresult);
                 await context.sendActivity(array);
@@ -227,5 +227,32 @@ async function requestRemoteByGetUser(url, user) {
         request.on('error', (err) => reject(err));
     });
 }
+
+async function requestRemoteByGet(url) {
+    return new Promise((resolve, reject) => {      
+      const options = {
+        hostname: snxHost,
+        port: 443,
+        path: url,
+        method: 'GET',
+        headers: {
+          'Authorization': 'Basic ' + new Buffer('ethanh:!ethanh2019A').toString('base64')
+        }
+      };
+      const request = https.get(options, res => {      
+        res.setEncoding('utf8');
+        let body = '';
+        res.on('data', data => {
+          body += data;
+        });
+        res.on('end', () => {
+          console.log("Pure Result is : "+body); 
+          resolve(body);   
+        });
+      });
+      
+      request.on('error', (err) => reject(err));    
+    });
+  }
 
 module.exports.DispatchBot = DispatchBot;
