@@ -152,13 +152,13 @@ class DispatchBot extends ActivityHandler {
                 let isfound = false;
 
                 let issueKey = backlogKey;
-                console.log('--------------Query Jira Issue key:' + issueKey);
 
                 let path = '/gateway/backlogQuery/' + issueKey;
-                console.log('--------------Query Jira Issue Path:' + path);
 
                 let tmpresult = await requestRemoteByGetUser(path, 'ethanh');
+                await context.sendActivity(tmpresult);
                 let array = JSON.parse(tmpresult);
+                await context.sendActivity(array);
                 if (array.hasOwnProperty('fields')) {
                     if (array.fields.hasOwnProperty('status')) {
                         if (array.fields.status.hasOwnProperty('name')) {
