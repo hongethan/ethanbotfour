@@ -143,7 +143,7 @@ class DispatchBot extends ActivityHandler {
             const luisResult = recognizerResult.luisResult;
             if (luisResult.entities.length > 0) {
                 await context.sendActivity(`processBacklog entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
-                const backlogKey = luisResult.entities[0].entity;
+                const backlogKey = luisResult.entities[0].entity.toString().trim();
 
                 await context.sendActivity(`${backlogKey}`);
 
@@ -153,10 +153,10 @@ class DispatchBot extends ActivityHandler {
 
                 let issueKey = backlogKey;
 
-                let path = '/gateway/backlogQuery/' + issueKey.toString().trim();
+                let path = '/gateway/backlogQuery/' + issueKey;
 
                 let tmpresult = await requestRemoteByGet(path);
-                await context.sendActivity(tmpresult);
+                await context.sendActivity(`{tmpresult}`);
                 let array = JSON.parse(tmpresult);
                 await context.sendActivity(array);
                 if (array.hasOwnProperty('fields')) {
