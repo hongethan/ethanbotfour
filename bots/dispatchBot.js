@@ -165,17 +165,13 @@ class DispatchBot extends ActivityHandler {
 
     createVideoCard() {
         return CardFactory.videoCard(
-            '2018 Imagine Cup World Championship Intro',
+            'Backlog Status',
             [{ url: 'https://sec.ch9.ms/ch9/783d/d57287a5-185f-4df9-aa08-fcab699a783d/IC18WorldChampionshipIntro2.mp4' }],
             [{
                 type: 'openUrl',
                 title: 'Lean More',
                 value: 'https://channel9.msdn.com/Events/Imagine-Cup/World-Finals-2018/2018-Imagine-Cup-World-Championship-Intro'
-            }],
-            {
-                subtitle: 'by Microsoft',
-                text: 'Microsoft\'s Imagine Cup has empowered student developers around the world to create and innovate on the world stage for the past 16 years. These innovations will shape how we live, work and play.'
-            }
+            }]
         );
     }
 }
