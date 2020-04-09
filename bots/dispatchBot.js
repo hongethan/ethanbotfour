@@ -68,6 +68,10 @@ class DispatchBot extends ActivityHandler {
                 await context.sendActivity('enter dispathere vendor search');
                 await this.processVendor(context, recognizerResult);
                 break;
+            case 'BacklogStatus':
+                await context.sendActivity('enter dispathere backlog');
+                await this.processBacklog(context, recognizerResult);
+                break;
             case 'None':
                 await this.processNone(context, recognizerResult.luisResult);
                 break;
@@ -131,19 +135,31 @@ class DispatchBot extends ActivityHandler {
         }
     }
 
+    async processBacklog(context, recognizerResult) {
+        console.log('processBacklog');
+
+        try {
+            const luisResult = recognizerResult.luisResult;
+            if (luisResult.entities.length > 0) {
+                await context.sendActivity(`processBacklog entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
+                const backlogKey = luisResult.entities[0].entity;
+
+                await context.sendActivity(`${backlogKey}`);
+
+                let finalresult = '';
+
+                await context.sendActivity(finalresult);
+            }
+        } catch (error) {
+            await context.sendActivity(error);
+        }
+    }
+
     async processNone(context, luisResult) {
         console.log('processNone');
 
-        // Retrieve LUIS results for Weather.
-        const result = luisResult.connectedServiceResult;
-        const topIntent = result.topScoringIntent.intent;
+        await context.sendActivity(`Sorry, I can't understand you, and I can help you to find the backlog status or vendor search`);
 
-        await context.sendActivity(`processNone top intent ${topIntent}.`);
-        await context.sendActivity(`processNone intents detected:  ${luisResult.intents.map((intentObj) => intentObj.intent).join('\n\n')}.`);
-
-        if (luisResult.entities.length > 0) {
-            await context.sendActivity(`processNone entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
-        }
     }
 }
 
@@ -151,27 +167,27 @@ async function requestRemoteByGetUser(url, user) {
     return new Promise(function (resolve, reject) {
         var crypto = require('crypto');
         const options = {
-          hostname: snxHost,
-          port: 443,
-          path: url,
-          method: 'GET',
-          headers: {
-            'user': crypto.createHash('sha1').update(user).digest('base64')
-          }
+            hostname: snxHost,
+            port: 443,
+            path: url,
+            method: 'GET',
+            headers: {
+                'user': crypto.createHash('sha1').update(user).digest('base64')
+            }
         };
-        const request = https.get(options, res => {      
-          res.setEncoding('utf8');
-          let body = '';
-          res.on('data', data => {
-            body += data;
-          });
-          res.on('end', () => {
-            console.log("Pure Result is : "+body); 
-            resolve(body); 
-          });
+        const request = https.get(options, res => {
+            res.setEncoding('utf8');
+            let body = '';
+            res.on('data', data => {
+                body += data;
+            });
+            res.on('end', () => {
+                console.log("Pure Result is : " + body);
+                resolve(body);
+            });
         });
-        
-        request.on('error', (err) => reject(err));   
+
+        request.on('error', (err) => reject(err));
     });
 }
 
