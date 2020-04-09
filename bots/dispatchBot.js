@@ -143,7 +143,7 @@ class DispatchBot extends ActivityHandler {
             const luisResult = recognizerResult.luisResult;
             if (luisResult.entities.length > 0) {
                 await context.sendActivity(`processBacklog entities were found in the message: ${luisResult.entities.map((entityObj) => entityObj.entity).join('\n\n')}.`);
-                const backlogKey = luisResult.entities[0].entity.toString().replace(/\s*/g,'').tolocaleUpperCase();
+                const backlogKey = luisResult.entities[0].entity.toString().replace(/\s*/g,'').toLocaleUpperCase();
 
                 await context.sendActivity(`${backlogKey}`);
 
