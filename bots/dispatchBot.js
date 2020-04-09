@@ -147,9 +147,33 @@ class DispatchBot extends ActivityHandler {
 
                 await context.sendActivity(`${backlogKey}`);
 
-                let finalresult = '';
+                let finalresult = 'I am sorry, I cannot find this backlog.';
+                let linkUrl = '';
+                let isfound = false;
 
-                await context.sendActivity({ attachments: [this.createVideoCard()] });
+                let issueKey = backlogKey;
+                console.log('--------------Query Jira Issue key:' + issueKey);
+
+                let path = '/gateway/backlogQuery/' + issueKey;
+                console.log('--------------Query Jira Issue Path:' + path);
+
+                let tmpresult = await requestRemoteByGetUser(path, 'ethanh');
+                let array = JSON.parse(tmpresult);
+                if (array.hasOwnProperty('fields')) {
+                    if (array.fields.hasOwnProperty('status')) {
+                        if (array.fields.status.hasOwnProperty('name')) {
+                            linkUrl = 'https://jira.synnex.com/browse/' + issueKey;
+                            finalresult = 'Found backlog ' + issueKey + '. Current status is ' + array.fields.status.name;
+                            isfound = true;
+                        } 
+                    } 
+                } 
+
+                if (isfound) {
+                    await context.sendActivity({ attachments: [this.createVideoCard(finalresult, linkUrl)] });
+                } else {
+                    await context.sendActivity(finalresult);
+                }
             }
         } catch (error) {
             await context.sendActivity(error);
@@ -163,14 +187,14 @@ class DispatchBot extends ActivityHandler {
 
     }
 
-    createVideoCard() {
+    createVideoCard(finalresult, linkUrl) {
         return CardFactory.videoCard(
             'Backlog Status',
             [{ url: 'https://sec.ch9.ms/ch9/783d/d57287a5-185f-4df9-aa08-fcab699a783d/IC18WorldChampionshipIntro2.mp4' }],
             [{
                 type: 'openUrl',
-                title: 'Lean More',
-                value: 'https://channel9.msdn.com/Events/Imagine-Cup/World-Finals-2018/2018-Imagine-Cup-World-Championship-Intro'
+                title: finalresult,
+                value: linkUrl
             }]
         );
     }
