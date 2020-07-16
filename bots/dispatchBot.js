@@ -46,8 +46,16 @@ class DispatchBot extends ActivityHandler {
         });
 
         this.onMembersAdded(async (context, next) => {
-            await context.sendActivity({ attachments: [this.createEntranceCard('请问您有什么问题？')] });
+            const membersAdded = context.activity.membersAdded;
 
+            for (const member of membersAdded) {
+                if (member.id !== context.activity.recipient.id) {
+                }else{
+                    await context.sendActivity({ attachments: [this.createEntranceCard('请问您有什么问题？')] });
+                }
+            }
+
+            // By calling next() you ensure that the next BotHandler is run.
             await next();
         });
     }
