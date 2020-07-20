@@ -35,6 +35,7 @@ class DispatchBot extends ActivityHandler {
             const intent = LuisRecognizer.topIntent(recognizerResult);
             await context.sendActivity('intent name: ' + intent);
             const topIntentScore = recognizerResult.intents[intent].score;
+            await context.sendActivity('intent score: ' + topIntentScore);
             if(topIntentScore < 0.3){
                 intent = 'None';
             }
