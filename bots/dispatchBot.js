@@ -30,18 +30,19 @@ class DispatchBot extends ActivityHandler {
 
             // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
             const recognizerResult = await dispatchRecognizer.recognize(context);
-            
+
             //await context.sendActivity('call dispatcher');
             const intent = LuisRecognizer.topIntent(recognizerResult);
             await context.sendActivity('intent name: ' + intent);
             const topIntentScore = recognizerResult.intents[intent].score;
             await context.sendActivity('intent score: ' + topIntentScore);
-            if(topIntentScore < 0.3){
-                intent = 'None';
+            if (typeof topIntentScore === 'number' && topIntentScore < 0.3) {
+                await this.processNone(context, recognizerResult.luisResult);
+            } else {
+                //await context.sendActivity('call topIntent');
+                //await context.sendActivity(intent);
+                await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
             }
-            //await context.sendActivity('call topIntent');
-            //await context.sendActivity(intent);
-            await this.dispatchToTopIntentAsync(context, intent, recognizerResult);
 
             // Top intent tell us which cognitive service to use.
             //const intent = LuisRecognizer.topIntent(recognizerResult);
@@ -57,7 +58,7 @@ class DispatchBot extends ActivityHandler {
 
             for (const member of membersAdded) {
                 if (member.id !== context.activity.recipient.id) {
-                }else{
+                } else {
                     await context.sendActivity({ attachments: [this.createEntranceCard('请问您有什么问题？')] });
                 }
             }
@@ -237,30 +238,30 @@ async function requestRemoteByGetUser(url, user) {
 }
 
 async function requestRemoteByGet(url) {
-    return new Promise((resolve, reject) => {      
-      const options = {
-        hostname: snxHost,
-        port: 443,
-        path: url,
-        method: 'GET',
-        headers: {
-          'Authorization': 'Basic ' + new Buffer('ethanh:!ethanh2019A').toString('base64')
-        }
-      };
-      const request = https.get(options, res => {      
-        res.setEncoding('utf8');
-        let body = '';
-        res.on('data', data => {
-          body += data;
+    return new Promise((resolve, reject) => {
+        const options = {
+            hostname: snxHost,
+            port: 443,
+            path: url,
+            method: 'GET',
+            headers: {
+                'Authorization': 'Basic ' + new Buffer('ethanh:!ethanh2019A').toString('base64')
+            }
+        };
+        const request = https.get(options, res => {
+            res.setEncoding('utf8');
+            let body = '';
+            res.on('data', data => {
+                body += data;
+            });
+            res.on('end', () => {
+                console.log("Pure Result is : " + body);
+                resolve(body);
+            });
         });
-        res.on('end', () => {
-          console.log("Pure Result is : "+body); 
-          resolve(body);   
-        });
-      });
-      
-      request.on('error', (err) => reject(err));    
+
+        request.on('error', (err) => reject(err));
     });
-  }
+}
 
 module.exports.DispatchBot = DispatchBot;
